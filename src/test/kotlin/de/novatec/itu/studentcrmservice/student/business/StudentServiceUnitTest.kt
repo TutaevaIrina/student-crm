@@ -1,5 +1,5 @@
 package de.novatec.itu.studentcrmservice.student.business
-/**
+
 import de.novatec.itu.studentcrmservice.exceptions.EmailAlreadyExistsException
 import de.novatec.itu.studentcrmservice.exceptions.StudentNotFoundException
 import de.novatec.itu.studentcrmservice.student.api.StudentRequestDTO
@@ -149,4 +149,3 @@ class StudentServiceUnitTest {
         }
    }
 }
-*/

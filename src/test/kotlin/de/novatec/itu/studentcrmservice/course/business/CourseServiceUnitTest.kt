@@ -1,5 +1,5 @@
 package de.novatec.itu.studentcrmservice.course.business
-/**
+
 import de.novatec.itu.studentcrmservice.course.api.CourseRequestDTO
 import de.novatec.itu.studentcrmservice.course.persistence.CourseEntity
 import de.novatec.itu.studentcrmservice.course.persistence.CourseRepository
@@ -238,4 +238,3 @@ class CourseServiceUnitTest {
         }
     }
 }
-*/
