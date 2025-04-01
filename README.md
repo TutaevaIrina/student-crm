@@ -1,35 +1,103 @@
-# Student CRM Service
+# Student CRM System
 
 ## Overview
-The "Student CRM Service" project is a Kotlin-based backend system designed to manage student and course data at educational institutions. It provides APIs for creating, updating, and querying student and course information.
+The **Student CRM System** is a full-stack web application for managing student and course data.  
+The solution consists of:
+- **Backend Service** (`student-crm-service`) in Kotlin with Spring Boot
+- **Frontend** (`student-crm-ui`) using Next.js and TypeScript
+
+---
 
 ## Technology Stack
-- **Language**: Kotlin
-- **Framework**: Spring Boot
-- **Database**: PostgreSQL
-- **Other Technologies**:
-    - Docker for containerization
-    - Flyway for database migrations
-    - JUnit for testing
+
+### Backend
+- **Language:** Kotlin
+- **Framework:** Spring Boot
+- **Persistence:** JPA/Hibernate + PostgreSQL
+- **Migration:** Flyway
+- **Testing:** JUnit 5, Testcontainers
+- **Containerization:** Docker
+
+### Frontend
+- **Framework:** Next.js (React-based)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Testing:** Jest
+- **Build Tool:** Vite / Next.js
+
+---
 
 ## Project Structure
-- `src/main/kotlin/`: Contains the main project code.
-    - `api/`: Controller classes for handling API requests.
-    - `business/`: Service classes with business logic.
-    - `model/`: DTOs and entity classes.
-    - `persistence/`: Repositories for data access.
-- `src/test/kotlin/`: Contains test classes.
-- `resources/`: Configuration files and resources.
-- `db/migration/`: SQL scripts for database migrations.
 
-## Setup and Installation
-Ensure Docker is installed on your system to deploy the environment.
+### `student-crm-service/`
+```
+src/
+ └── main/
+      └── kotlin/
+           └── com/novatec/studentcrmservice/
+                ├── course/           # Course-related logic (API, Business, Persistence)
+                ├── student/          # Student-related logic (API, Business, Persistence)
+                ├── shared/           # Error handling, filters, data types
+                └── config/           # Web configuration
+ └── test/                            # Unit and integration tests
+ └── resources/                       # application.yml, Flyway migrations, etc.
+```
 
-1. Clone the repository.
-2. Start the application using Docker Compose: docker-compose up
+### `student-crm-ui/`
+```
+src/
+ └── app/
+      ├── components/     # UI components for students & courses
+      ├── contexts/       # React contexts for state management
+      ├── courses/        # Course pages (routing)
+      ├── students/       # Student pages (routing)
+      ├── styles/         # Theme & styling
+      └── types/          # TypeScript type definitions
+```
+
+---
+
+## Setup & Start
+
+### Requirements
+- Docker & Docker Compose
+- Node.js
+
+### Start Backend
+```bash
+cd student-crm-service
+docker-compose up
+```
+
+### Start Frontend
+```bash
+cd student-crm-ui
+npm install
+npm run dev
+```
+
+---
 
 ## API Endpoints
-- `POST /students`: Adds a new student.
-- `GET /students/{id}`: Retrieves details of a student.
-- `POST /courses`: Adds a new course.
-- `GET /courses/{id}`: Retrieves details of a course.
+
+### Students
+- `POST /students` – Add a new student
+- `GET /students/{id}` – Get student details
+
+### Courses
+- `POST /courses` – Add a new course
+- `GET /courses/{id}` – Get course details
+
+---
+
+## Run Tests
+
+### Backend
+```bash
+./gradlew test
+```
+
+### Frontend
+```bash
+npm run test
+```

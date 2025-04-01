@@ -1,0 +1,31 @@
+:toc: left
+:toclevels: 4
+:sectnums:
+:data-uri:
+
+= Student CRM Service - API
+
+== Resources
+
+=== Student CRM
+
+Beschreibungstext
+
+==== Get All Student
+
+Beschreibungstext
+
+===== Request
+
+.Request of Get All Student
+inclucde
+
+.Request Body
+include
+
+===== Response
+
+include
+
+.Response Body
+include
