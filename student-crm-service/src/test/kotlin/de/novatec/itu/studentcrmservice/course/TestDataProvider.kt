@@ -1,6 +1,5 @@
 package de.novatec.itu.studentcrmservice.course
 
-import de.novatec.itu.studentcrmservice.course.api.CourseRequestBodyDTO
 import de.novatec.itu.studentcrmservice.course.model.CourseDTO
 import de.novatec.itu.studentcrmservice.course.model.CourseSimpleDTO
 import de.novatec.itu.studentcrmservice.course.model.CourseWithStudentIdsDTO
@@ -8,40 +7,70 @@ import de.novatec.itu.studentcrmservice.course.persistence.CourseEntity
 import de.novatec.itu.studentcrmservice.student.persistence.StudentEntity
 
 object TestDataProvider {
-    val defaultCourseRequestBody = CourseRequestBodyDTO(courseName = "English")
-    val defaultCourseSimpleDTO = CourseSimpleDTO(id = 1, courseName = "English")
-    val defaultCourseWithStudentIdsDTO = CourseWithStudentIdsDTO(id = 1, courseName = "English", students = setOf())
-    val defaultCourseDTO = CourseDTO(id = 1L, courseName = "English")
-    val defaultCourseNameEnglish = "English"
-    val defaultCourseNameSpanish = "Spanish"
-    val defaultCourseId = 1L
-    val defaultStudentId = 1L
-    val defaultCourseEntityList = listOf(
-        CourseEntity(1L, "English"),
-        CourseEntity(
-            2L, "Spanish", mutableListOf(
-                StudentEntity(id = 1, "Mark", "Miller", "mark@miller.com")
-            )
-        )
+
+    val defaultCourseDTO = CourseDTO(
+        id = 0L,
+        courseName = "Mathe"
     )
 
-    val jsonPropertyIsBlank = """
-        {
-            "id": 1,
-            "courseName": ""
-        }        
-    """
-    val jsonPropertyIsInvalid = """
-       {
-            "id": 1,
-            "courseName": "$"
-       } 
-    """
+    val defaultSimpleCourseDTO = CourseSimpleDTO(
+        id = 0L,
+        courseName = "Mathe"
+    )
 
-    val jsonPropertyIsMissing = """
-        {
-            "id": 1,
-            "coursNam": "Mathe"
-       }        
-    """
+    val defaultCourseEntity = CourseEntity(
+        courseName = "Mathe"
+    )
+
+    val defaultStudentEntity = StudentEntity(
+        firstName = "Maik",
+        lastName = "Müller",
+        email = "maikmüller@web.de"
+    )
+
+    val courseNameMathe = "Mathe"
+    val courseNameIT = "IT"
+
+    val studentName = "Maik Müller"
+
+    val defaultCourseId = 0L
+
+    val defaultStudentId = 0L
+
+    val jsonPropertyNameIsWrong =
+        """
+           {
+                "id": 1,
+                "courseNa": "Mathe"
+           }
+        """
+
+    val jsonPropertyValueIsBlank =
+        """
+           {
+                "id": 1,
+                "courseName": ""
+           }
+        """
+
+    val jsonPropertyValueIsNotValid =
+        """
+           {
+                "id": 1,
+                "courseName": "$"
+           }
+        """
+
+    val courseWithStudentIdsDTO1 = CourseWithStudentIdsDTO(
+        defaultCourseId,
+        courseNameMathe,
+        mutableSetOf()
+    )
+
+    val courseWithStudentIdsDTO2 = CourseWithStudentIdsDTO(
+        1L,
+        courseNameIT,
+        mutableSetOf()
+    )
+
 }

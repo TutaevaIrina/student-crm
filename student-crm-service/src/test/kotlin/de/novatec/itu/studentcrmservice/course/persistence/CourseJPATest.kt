@@ -1,59 +1,50 @@
 package de.novatec.itu.studentcrmservice.course.persistence
 
-import org.assertj.core.api.Assertions.assertThat
+import de.novatec.itu.studentcrmservice.course.TestDataProvider.courseNameIT
+import de.novatec.itu.studentcrmservice.course.TestDataProvider.courseNameMathe
+import de.novatec.itu.studentcrmservice.utils.InitializeWithContainerizedPostgreSQL
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
 
-@ActiveProfiles("test", "docker")
 @DataJpaTest
+@ActiveProfiles("test", "docker")
+@InitializeWithContainerizedPostgreSQL
 class CourseJPATest(@Autowired private val courseRepository: CourseRepository) {
-    private lateinit var courseEntity1: CourseEntity
-    private lateinit var courseEntity2: CourseEntity
 
     @BeforeEach
-    fun setUp() {
-        courseEntity1 = CourseEntity(courseName = "English")
-        courseEntity2 = CourseEntity(courseName = "Spanish")
+    fun init() {
+        courseRepository.deleteAll()
     }
 
-    @Nested
-    inner class FindByNameIgnoreCase {
-        @Test
-        fun `getting courses by name ignoring case`() {
-            courseRepository.save(courseEntity1)
-            courseRepository.save(courseEntity2)
-            val result = courseRepository.findByNameIgnoreCase("ish")
+    @Test
+    fun `findByNameIgnoreCase returns course`() {
+        val course = CourseEntity(courseName = courseNameMathe)
+        courseRepository.save(course)
 
-            assertThat(result).hasSize(2)
-            assertThat(result).extracting("courseName").containsOnly("English", "Spanish")
-        }
+        val result = courseRepository.findByNameIgnoreCase("mat")
 
-        @Test
-        fun `returns empty list when the name does not exist`() {
-            val result = courseRepository.findByNameIgnoreCase("ish")
-
-            assertThat(result).isEmpty()
-        }
+        result.isNotEmpty() shouldBe true
+        result[0].courseName shouldBe "Mathe"
     }
 
-    @Nested
-    inner class ExistsByCourseName {
-        @Test
-        fun `returns true if a course name exists`() {
-            courseRepository.save(courseEntity1)
+    @Test
+    fun `existsByCourseNameIgnoreCase returns true if course exists`() {
+        val course = CourseEntity(courseName = courseNameIT)
+        courseRepository.save(course)
 
-            val result = courseRepository.existsByCourseNameIgnoreCase(courseEntity1.courseName)
-            assertThat(result).isTrue
-        }
+        val exists = courseRepository.existsByCourseNameIgnoreCase("IT")
 
-        @Test
-        fun `returns false when course name does not exist`() {
-            val exists = courseRepository.existsByCourseNameIgnoreCase(courseEntity2.courseName)
-            assertThat(exists).isFalse()
-        }
+        exists shouldBe true
+    }
+
+    @Test
+    fun `existsByCourseNameIgnoreCase returns false if course does not exist`() {
+        val exists = courseRepository.existsByCourseNameIgnoreCase("Physik")
+
+        exists shouldBe false
     }
 }

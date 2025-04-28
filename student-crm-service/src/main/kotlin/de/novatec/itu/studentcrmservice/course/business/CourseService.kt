@@ -32,7 +32,7 @@ class CourseService(
         return courseRepository.save(CourseEntity(courseName = courseName)).toSimpleDTO()
     }
 
-    fun findCourseById(courseId: Long): CourseDTO {
+    fun getCourseById(courseId: Long): CourseDTO {
         return findCourseInRepositoryById(courseId).toDto()
     }
 

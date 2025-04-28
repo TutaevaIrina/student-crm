@@ -22,7 +22,7 @@ class CourseController (
     @GetMapping("/course/{courseId}")
     @ResponseStatus(HttpStatus.OK)
     fun getCourseById(@PathVariable courseId: Long) =
-        courseService.findCourseById(courseId)
+        courseService.getCourseById(courseId)
 
     @GetMapping("/courses/{name}")
     @ResponseStatus(HttpStatus.OK)

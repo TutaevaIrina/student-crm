@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/de.novatec.je.student-crm-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/de.novatec.je.student-crm-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/de.novatec.je.student-crm-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/de.novatec.je.student-crm-service.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/student-crm.iml" filepath="$PROJECT_DIR$/.idea/student-crm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/student-crm-service.iml" filepath="$PROJECT_DIR$/.idea/modules/student-crm-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/student-crm-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/student-crm-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/student-crm-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/student-crm-service.test.iml" />
     </modules>
   </component>
 </project>

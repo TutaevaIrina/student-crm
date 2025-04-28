@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: io.kotest:kotest-common-jvm:5.8.1" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="io.kotest" artifactId="kotest-common-jvm" version="5.8.1" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.kotest/kotest-common-jvm/5.8.1/ac65192e28a0b3046dd439b96a6913fd6aedd80b/kotest-common-jvm-5.8.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.kotest/kotest-common-jvm/5.8.1/9b9f5b29018c7aae950071a75258f86d815c4b80/kotest-common-jvm-5.8.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
