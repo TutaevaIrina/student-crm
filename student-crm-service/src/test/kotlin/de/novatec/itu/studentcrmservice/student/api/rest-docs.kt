@@ -5,14 +5,12 @@ import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler
 import org.springframework.restdocs.operation.preprocess.Preprocessors.*
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.request.ParameterDescriptor
-import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.restdocs.snippet.Snippet
 
 fun prettyDocument(id: String, vararg snippets: Snippet): RestDocumentationResultHandler =
     document(id, preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()), *snippets)
 
-val getAllStudentResponse: List<FieldDescriptor> = listOf(
+val getAllStudentsResponse: List<FieldDescriptor> = listOf(
     fieldWithPath("[].id")
         .type("Long")
         .description("The id of the Student."),
@@ -48,8 +46,5 @@ val getAllStudentResponse: List<FieldDescriptor> = listOf(
                 appendLine("Pattern: `[\\w!#\$%&’*+/=?`{|}~^-]+(?:\\.[\\w!#\$%&’*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}\$` +")
                 appendLine("Examples: `user@domain.com`, `user.name@domain.com`, `user_name@domain.com`, `username@yahoo.corporate.in` etc.")
             }
-        ),
-    fieldWithPath("[].courses")
-        .type("List<SimpleCourseDTO>")
-        .description("A list of courses which is from type SimpleCourseDTO that represents the id and coursename of a Course")
+        )
 )

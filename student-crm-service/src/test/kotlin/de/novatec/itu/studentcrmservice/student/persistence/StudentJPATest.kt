@@ -1,9 +1,9 @@
 package de.novatec.itu.studentcrmservice.student.persistence
 
-import de.novatec.itu.studentcrmservice.student.persistence.StudentEntity
-import de.novatec.itu.studentcrmservice.student.persistence.StudentRepository
 import de.novatec.itu.studentcrmservice.utils.InitializeWithContainerizedPostgreSQL
-import de.novatec.itu.studentcrmservice.student.TestDataProvider.defaultStudentSimpleDTO
+import de.novatec.itu.studentcrmservice.student.TestDataProvider.email
+import de.novatec.itu.studentcrmservice.student.TestDataProvider.firstName
+import de.novatec.itu.studentcrmservice.student.TestDataProvider.lastName
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,38 +13,33 @@ import org.springframework.test.context.ActiveProfiles
 @DataJpaTest
 @ActiveProfiles("test", "docker")
 @InitializeWithContainerizedPostgreSQL
-class StudentJPATest(@Autowired private val repository: StudentRepository) {
+class StudentJPATest(@Autowired private val studentRepository: StudentRepository) {
 
     @Test
-    fun `find all Students`() {
-        val studentEntity = StudentEntity(
-            firstName = "Maik",
-            lastName = "Müller",
-            email = "maikmüller@web.de"
-        )
-        val studentCreation = repository.save(studentEntity)
+    fun `findByNameIgnoreCase returns students matching first or last name ignoring case`() {
+        val student1 = StudentEntity(firstName = firstName, lastName = lastName, email = email)
+        val student2 = StudentEntity(firstName = "Lea", lastName = "Müller", email = "lea_mueller@example.com")
+        studentRepository.saveAll(listOf(student1, student2))
 
-        val listOfStudents = repository.findAll()
+        val result = studentRepository.findByNameIgnoreCase("er")
 
-        listOfStudents shouldBe listOf(studentCreation)
+        result shouldBe listOf(student1, student2)
     }
 
     @Test
-    fun `creates a Student`() {
-        val studentEntity = StudentEntity(
-            firstName = "Lea",
-            lastName = "Müller",
-            email = "leamüller@web.de"
-        )
-        val expectedData = defaultStudentSimpleDTO.copy(
-            id = 2,
-            firstName = "Lea",
-            lastName = "Müller",
-            email = "leamüller@web.de"
-        )
+    fun `existsByEmailIgnoreCase returns true if email exists ignoring case`() {
+        val student = StudentEntity(firstName = firstName, lastName = lastName, email = email)
+        studentRepository.save(student)
 
-        val creationOfStudent = repository.save(studentEntity).toSimpleDto()
+        val exist = studentRepository.existsByEmailIgnoreCase("maik_mueller@web.de")
 
-        creationOfStudent shouldBe expectedData
+        exist shouldBe true
+    }
+
+    @Test
+    fun `existsByEmailIgnoreCase returns false if email does not exist`() {
+        val exist = studentRepository.existsByEmailIgnoreCase("unknown@example.com")
+
+        exist shouldBe false
     }
 }

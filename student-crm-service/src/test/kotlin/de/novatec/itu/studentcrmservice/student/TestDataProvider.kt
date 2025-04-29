@@ -12,7 +12,7 @@ object TestDataProvider {
 
     val lastName = "Müller"
 
-    val email = "maikmüller@web.de"
+    val email = "maik_mueller@web.de"
 
     val defaultStudentDTO = StudentDTO(
         id = 0L,

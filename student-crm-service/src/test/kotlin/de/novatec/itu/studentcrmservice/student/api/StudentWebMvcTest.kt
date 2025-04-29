@@ -4,7 +4,6 @@ import com.ninjasquad.springmockk.MockkBean
 import de.novatec.itu.studentcrmservice.student.TestDataProvider.email
 import de.novatec.itu.studentcrmservice.student.TestDataProvider.firstName
 import de.novatec.itu.studentcrmservice.student.TestDataProvider.lastName
-import de.novatec.itu.studentcrmservice.student.api.StudentController
 import de.novatec.itu.studentcrmservice.student.business.StudentService
 import de.novatec.itu.studentcrmservice.student.TestDataProvider.defaultStudentSimpleDTO
 import io.mockk.every
@@ -34,15 +33,14 @@ class StudentWebMvcTest @Autowired constructor(
     inner class GetAllStudents {
 
         @Test
-        fun `getting students returns 200 response - happy path`() {
+        fun `getting students returns 200 OK`() {
 
             every { service.findAllStudents() } returns listOf(
-                defaultStudentSimpleDTO.copy(id = 1L),
+                defaultStudentSimpleDTO.copy(),
                 defaultStudentSimpleDTO.copy(
-                    id = 2L,
                     firstName = "Lea",
                     lastName = "Müller",
-                    email = "leamüller@web.de"
+                    email = "lea_mueller@web.de"
                 )
             )
 
@@ -52,19 +50,15 @@ class StudentWebMvcTest @Autowired constructor(
                     content().json(
                         """
                         [
-                        {
-                          "id": 1,
+                        {                          
                           "firstName": "Maik",
                           "lastName": "Müller",
-                          "email": "maikmüller@web.de",
-                          "courses": []
+                          "email": "maik_mueller@web.de"                          
                         },
-                        {
-                          "id": 2,
+                        {                          
                           "firstName": "Lea",
                           "lastName": "Müller",
-                          "email": "leamüller@web.de",
-                          "courses": []
+                          "email": "lea_mueller@web.de"                          
                         }
                         ]    
                         """
@@ -74,16 +68,18 @@ class StudentWebMvcTest @Autowired constructor(
                 .andDo(
                     prettyDocument(
                         "get-all-students",
-                        responseFields(getAllStudentResponse)
+                        responseFields(getAllStudentsResponse)
                     )
                 )
         }
 
         @Test
-        fun `parameters are delegated correctly`() {
+        fun `delegating GET students request to StudentService`() {
             every { service.findAllStudents() } returns listOf()
 
             mockMvc.perform(get("/student-api/students"))
+                .andExpect(status().isOk)
+                .andExpect(content().json("[]"))
 
             verify { service.findAllStudents() }
         }
@@ -93,31 +89,40 @@ class StudentWebMvcTest @Autowired constructor(
     inner class CreateNewStudent {
 
         @Test
-        fun `creating a student returns 201 response - happy path`() {
-
+        fun `creating a student returns 201 CREATED`() {
             every {
-                service.createStudent(
-                    firstName, lastName, email
-                )
-            } returns defaultStudentSimpleDTO
+                service.createStudent(firstName, lastName, email)
+            } returns defaultStudentSimpleDTO.copy()
+
             mockMvc.perform(
                 post("/student-api/student")
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
                     .content(
                         """
-                            {
-                              "id": 1,
-                              "firstName": "Maik",
-                              "lastName": "Müller",
-                              "email": "maikmüller@web.de"
-                            }
-                        """
+                    {                      
+                      "firstName": "Maik",
+                      "lastName": "Müller",
+                      "email": "maik_mueller@web.de"
+                    }
+                """.trimIndent()
                     )
-                    .contentType(APPLICATION_JSON)
             )
+                .andExpect(status().isCreated)
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(content().json(
+                    """
+                {                  
+                  "firstName": "Maik",
+                  "lastName": "Müller",
+                  "email": "maik_mueller@web.de"
+                }
+            """.trimIndent()
+                ))
         }
 
         @Test
-        fun `parameters are delegated correctly`() {
+        fun `delegating POST student request to StudentService`() {
             every {
                 service.createStudent(
                     firstName, lastName, email
@@ -126,18 +131,18 @@ class StudentWebMvcTest @Autowired constructor(
 
             mockMvc.perform(
                 post("/student-api/student")
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
                     .content(
                         """
-                            {
-                              "id": 1,
-                              "firstName": "Jorge",
-                              "lastName": "Esteves",
-                              "email": "j.esteves@web.de"
-                            }
-                        """
+            {
+              "firstName": "Maik",
+              "lastName": "Müller",
+              "email": "maik_mueller@web.de"
+            }
+            """.trimIndent()
                     )
-                    .contentType(APPLICATION_JSON)
-            )
+            ).andExpect(status().isCreated)
 
             verify {
                 service.createStudent(
