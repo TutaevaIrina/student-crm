@@ -1,27 +1,35 @@
-# StudentCrmUi
+# Student CRM UI
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.0.
+This is a React/Next.js application for the Student CRM system.
 
-## Development server
+## Technologies
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Jest (for testing)
+- MUI (Material UI)
 
-## Code scaffolding
+## Getting Started Locally
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### 1. Install dependencies
 
-## Build
+```bash
+npm install
+```
+### 2. **Start the development server**
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```bash
+npm run dev
+```
+### 3. ***Open in browser***
 
-## Running unit tests
+http://localhost:3000
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Project Structure
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- `src/app` – Main application with pages, components, and logic
+- `src/app/components` – Reusable UI components
+- `src/app/utils` – Helper functions such as `apiUtils.ts`
+- `src/app/styles` – Global CSS and theme files

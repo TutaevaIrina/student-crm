@@ -4,7 +4,7 @@
 The **Student CRM System** is a full-stack web application for managing student and course data.  
 The solution consists of:
 - **Backend Service** (`student-crm-service`) in Kotlin with Spring Boot
-- **Frontend** (`student-crm-ui`) using Next.js and TypeScript
+- **Frontend** (`student-crm-ui`) using React/Next.js and TypeScript
 
 ---
 
@@ -35,24 +35,25 @@ src/
  └── main/
       └── kotlin/
            └── com/novatec/studentcrmservice/
-                ├── course/           # Course-related logic (API, Business, Persistence)
-                ├── student/          # Student-related logic (API, Business, Persistence)
-                ├── shared/           # Error handling, filters, data types
-                └── config/           # Web configuration
- └── test/                            # Unit and integration tests
- └── resources/                       # application.yml, Flyway migrations, etc.
+                ├── config/       # Web configuration
+                ├── course/       # Course-related logic (API, Business, Model, Persistence)
+                ├── student/      # Student-related logic (API, Business, Model, Persistence)
+                └── exceptions/   # Error handling
+ ├── test/                       # Unit and integration tests
+ └── resources/                  # application.properties, Flyway migrations, etc.
 ```
 
 ### `student-crm-ui/`
 ```
 src/
  └── app/
-      ├── components/     # UI components for students & courses
-      ├── contexts/       # React contexts for state management
-      ├── courses/        # Course pages (routing)
-      ├── students/       # Student pages (routing)
-      ├── styles/         # Theme & styling
-      └── types/          # TypeScript type definitions
+      ├── components/   # UI components for students & courses
+      ├── contexts/     # React contexts for state management
+      ├── courses/      # Course pages (routing)
+      ├── students/     # Student pages (routing)
+      ├── styles/       # Theme & styling
+      ├── types/        # TypeScript type definitions
+      └── utils/        # Utility functions for API requests and helpers
 ```
 
 ---
@@ -80,15 +81,17 @@ npm run dev
 
 ## API Endpoints
 
-### Students
-- `POST /students` – Add a new student
-- `GET /students/{id}` – Get student details
-
 ### Courses
-- `POST /courses` – Add a new course
-- `GET /courses/{id}` – Get course details
+- `POST /course` – Add a new course
+- `GET /course/{id}` – Get course details
 
 ---
+
+### Students
+- `POST /student` – Add a new student
+- `GET /student/{id}` – Get student details
+
+
 
 ## Run Tests
 
