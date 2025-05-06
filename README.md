@@ -81,17 +81,33 @@ npm run dev
 
 ## API Endpoints
 
-### Courses
-- `POST /course` – Add a new course
-- `GET /course/{id}` – Get course details
+### Course API (`/course-api`)
+
+| Method | Endpoint                                    | Description                   |
+|--------|--------------------------------------------|-------------------------------|
+| GET    | `/courses`                                 | Get all courses               |
+| POST   | `/course`                                  | Create a new course           |
+| GET    | `/course/{courseId}`                       | Get course by ID              |
+| GET    | `/courses/{name}`                          | Get course by name            |
+| PUT    | `/course/{courseId}`                       | Update course name            |
+| DELETE | `/course/{courseId}`                       | Delete course by ID           |
+| PUT    | `/course/{courseId}/student/{studentId}`   | Add student to course         |
+| DELETE | `/course/{courseId}/student/{studentId}`   | Remove student from course    |
 
 ---
 
-### Students
-- `POST /student` – Add a new student
-- `GET /student/{id}` – Get student details
+### Student API (`/student-api`)
 
+| Method | Endpoint                                    | Description                   |
+|--------|--------------------------------------------|-------------------------------|
+| GET    | `/students`                                | Get all students              |
+| POST   | `/student`                                 | Create a new student          |
+| GET    | `/student/{studentId}`                     | Get student by ID             |
+| GET    | `/students/{name}`                         | Get student by name           |
+| PUT    | `/student/{studentId}`                     | Update student                |
+| DELETE | `/student/{studentId}`                     | Delete student by ID          |
 
+---
 
 ## Run Tests
 
