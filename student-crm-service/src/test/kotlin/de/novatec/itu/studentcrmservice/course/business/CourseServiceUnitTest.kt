@@ -4,6 +4,7 @@ import de.novatec.itu.studentcrmservice.course.TestDataProvider.courseNameMathe
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.courseNameIT
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.courseWithStudentIdsDTO1
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultCourseEntity
+import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultCourseEntityWithStudents
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultCourseId
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultSimpleCourseDTO
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.studentName
@@ -15,7 +16,6 @@ import de.novatec.itu.studentcrmservice.student.persistence.StudentRepository
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultStudentId
 import io.kotest.matchers.shouldBe
 import io.mockk.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -77,21 +77,15 @@ class CourseServiceUnitTest {
 
     @Nested
     inner class CreatingCourse {
-
-        val courseCaptor = slot<CourseEntity>()
-
-        @BeforeEach
-        fun setUp() {
-            every { courseRepository.save(capture(courseCaptor)) } answers { courseCaptor.captured }
-        }
-
         @Test
         fun `creating a course`() {
+            val courseCaptor = slot<CourseEntity>()
             every { courseRepository.existsByCourseNameIgnoreCase(courseNameMathe) } returns false
+            every { courseRepository.save(capture(courseCaptor)) } answers { courseCaptor.captured }
 
             val result = cut.createCourse(courseNameMathe)
-
             val persistedEntity = courseCaptor.captured
+
             result shouldBe defaultSimpleCourseDTO
             persistedEntity.courseName shouldBe defaultSimpleCourseDTO.courseName
             verify { courseRepository.save(persistedEntity) }
@@ -144,7 +138,6 @@ class CourseServiceUnitTest {
             val courseEntity = CourseEntity(courseName = "Physik")
             every { courseRepository.findById(defaultCourseId) } returns Optional.of(courseEntity)
             every { courseRepository.existsByCourseNameIgnoreCase(courseNameMathe) } returns true
-            every { courseRepository.save(any()) } returns courseEntity
 
             assertThrows<CourseAlreadyExistsException> {
                 cut.updateCourse(defaultCourseId, courseNameMathe)
@@ -152,14 +145,13 @@ class CourseServiceUnitTest {
 
             verify(exactly = 0) { courseRepository.save(any()) }
         }
-
     }
 
     @Nested
     inner class AddStudentToCourse {
 
         @Test
-        fun `add a Student to course`() {
+        fun `add a student to course`() {
             val entityCapture = slot<CourseEntity>()
             val courseEntity = CourseEntity(courseName = courseNameMathe)
 
@@ -217,6 +209,61 @@ class CourseServiceUnitTest {
             verify { courseRepository.save(courseEntity) wasNot called }
         }
     }
+
+    @Nested
+    inner class RemoveStudentFromCourse {
+
+        @Test
+        fun `removes student from course`() {
+            val courseEntity = defaultCourseEntity
+            val studentEntity = defaultStudentEntity
+
+            courseEntity.students.add(studentEntity)
+            studentEntity.courses.add(courseEntity)
+
+
+            every { courseRepository.findById(defaultCourseId) } returns Optional.of(courseEntity)
+            every { studentRepository.findById(defaultStudentId) } returns Optional.of(studentEntity)
+            every { courseRepository.save(any()) } returns courseEntity
+
+            cut.removeStudentFromCourse(defaultCourseId, defaultStudentId)
+
+            courseEntity.students.contains(studentEntity) shouldBe false
+            studentEntity.courses.contains(courseEntity) shouldBe false
+
+            verify { courseRepository.save(courseEntity) }
+        }
+
+        @Test
+        fun `throws StudentNotFoundException when student does not exist`() {
+            val courseEntity = defaultCourseEntityWithStudents
+
+            every { courseRepository.findById(defaultCourseId) } returns Optional.of(courseEntity)
+            every { studentRepository.findById(defaultStudentId) } returns Optional.empty()
+
+            assertThrows<StudentNotFoundException> {
+                cut.removeStudentFromCourse(defaultCourseId, defaultStudentId)
+            }
+
+            verify(exactly = 0) { courseRepository.save(any()) }
+        }
+
+        @Test
+        fun `throws StudentNotEnrolledInCourseException when student is not enrolled in course`() {
+            val courseEntity = defaultCourseEntity
+            val studentEntity = defaultStudentEntity
+
+            every { courseRepository.findById(defaultCourseId) } returns Optional.of(courseEntity)
+            every { studentRepository.findById(defaultStudentId) } returns Optional.of(studentEntity)
+
+            assertThrows<StudentNotEnrolledInCourseException> {
+                cut.removeStudentFromCourse(defaultCourseId, defaultStudentId)
+            }
+
+            verify(exactly = 0) { courseRepository.save(any()) }
+        }
+    }
+
 
     @Nested
     inner class DeleteCourse {

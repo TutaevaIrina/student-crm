@@ -28,6 +28,12 @@ object TestDataProvider {
         email = "maikmüller@web.de"
     )
 
+    val defaultCourseEntityWithStudents = CourseEntity(
+        id = 1L,
+        courseName = "Mathe",
+        mutableListOf(defaultStudentEntity)
+    )
+
     val courseNameMathe = "Mathe"
     val courseNameIT = "IT"
 
@@ -37,15 +43,15 @@ object TestDataProvider {
 
     val defaultStudentId = 0L
 
-    val jsonPropertyNameIsWrong =
-        """
+    val jsonPropertyIsWrong =
+        """a
            {
                 "id": 1,
                 "courseNa": "Mathe"
            }
         """
 
-    val jsonPropertyValueIsBlank =
+    val jsonValueIsBlank =
         """
            {
                 "id": 1,
@@ -53,7 +59,7 @@ object TestDataProvider {
            }
         """
 
-    val jsonPropertyValueIsNotValid =
+    val jsonValueIsNotValid =
         """
            {
                 "id": 1,
@@ -72,5 +78,4 @@ object TestDataProvider {
         courseNameIT,
         mutableSetOf()
     )
-
 }

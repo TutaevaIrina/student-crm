@@ -6,9 +6,9 @@ import de.novatec.itu.studentcrmservice.course.TestDataProvider.courseNameMathe
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultCourseDTO
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultCourseId
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultSimpleCourseDTO
-import de.novatec.itu.studentcrmservice.course.TestDataProvider.jsonPropertyValueIsBlank
-import de.novatec.itu.studentcrmservice.course.TestDataProvider.jsonPropertyNameIsWrong
-import de.novatec.itu.studentcrmservice.course.TestDataProvider.jsonPropertyValueIsNotValid
+import de.novatec.itu.studentcrmservice.course.TestDataProvider.jsonValueIsBlank
+import de.novatec.itu.studentcrmservice.course.TestDataProvider.jsonPropertyIsWrong
+import de.novatec.itu.studentcrmservice.course.TestDataProvider.jsonValueIsNotValid
 import de.novatec.itu.studentcrmservice.course.business.CourseService
 import de.novatec.itu.studentcrmservice.exceptions.CourseNotFoundException
 import de.novatec.itu.studentcrmservice.exceptions.CourseAlreadyExistsException
@@ -41,7 +41,7 @@ class CourseWebMvcTest @Autowired constructor(
     inner class GetAllCourses {
 
         @Test
-        fun `getting courses returns response 200 OK`() {
+        fun `getting courses returns 200 OK`() {
             every { courseService.findAllCourses() } returns listOf(
                 courseWithStudentIdsDTO1,
                 courseWithStudentIdsDTO2
@@ -65,7 +65,7 @@ class CourseWebMvcTest @Autowired constructor(
         }
 
         @Test
-        fun `getting courses returns 500 INTERNAL SERVER ERROR when request method is wrong`() {
+        fun `getting courses returns 500 INTERNAL SERVER ERROR when wrong HTTP method is used`() {
             mockMvc.perform(post("/course-api/courses"))
                 .andExpectAll(
                     status().isInternalServerError,
@@ -74,7 +74,7 @@ class CourseWebMvcTest @Autowired constructor(
         }
 
         @Test
-        fun `getting courses returns 500 INTERNAL SERVER ERROR when url is wrong`() {
+        fun `getting courses returns 500 INTERNAL SERVER ERROR when wrong URL is used`() {
             mockMvc.perform(get("/course-api/cour"))
                 .andExpectAll(
                     status().isInternalServerError,
@@ -87,7 +87,7 @@ class CourseWebMvcTest @Autowired constructor(
     inner class GetCourseById {
 
         @Test
-        fun `getting course by id`() {
+        fun `getting a course by id`() {
             every { courseService.getCourseById(defaultCourseId) } returns defaultCourseDTO
 
             mockMvc.perform(get("/course-api/course/{courseId}", defaultCourseId))
@@ -101,7 +101,7 @@ class CourseWebMvcTest @Autowired constructor(
         }
 
         @Test
-        fun `getting course by id returns response 404 NOT FOUND when course was not found`() {
+        fun `getting a course by id returns 404 NOT FOUND when course was not found`() {
             every { courseService.getCourseById(defaultCourseId) } throws CourseNotFoundException(defaultCourseId)
 
             mockMvc.perform(get("/course-api/course/{courseId}", defaultCourseId))
@@ -112,7 +112,7 @@ class CourseWebMvcTest @Autowired constructor(
         }
 
         @Test
-        fun `getting course by id returns 500 INTERNAL SERVER ERROR when request methode is wrong`() {
+        fun `getting a course by id returns 500 INTERNAL SERVER ERROR when request methode is wrong`() {
             mockMvc.perform(post("/course-api/course/{courseId}", defaultCourseId))
                 .andExpectAll(
                     status().isInternalServerError,
@@ -121,7 +121,7 @@ class CourseWebMvcTest @Autowired constructor(
         }
 
         @Test
-        fun `getting course by id returns 500 INTERNAL SERVER ERROR when url is wrong`() {
+        fun `getting a course by id returns 500 INTERNAL SERVER ERROR when url is wrong`() {
             mockMvc.perform(get("/course-api/cose/{courseId}", defaultCourseId))
                 .andExpectAll(
                     status().isInternalServerError,
@@ -155,12 +155,12 @@ class CourseWebMvcTest @Autowired constructor(
         }
 
         @Test
-        fun `creating a course returns 400 BAD REQUEST when the JSON property name is wrong or missing`() {
+        fun `creating a course returns 400 BAD REQUEST when the JSON property is wrong or missing`() {
             mockMvc.perform(
                 post("/course-api/course")
                     .accept(APPLICATION_JSON)
                     .contentType(APPLICATION_JSON)
-                    .content(jsonPropertyNameIsWrong)
+                    .content(jsonPropertyIsWrong)
             ).andExpectAll(
                 status().isBadRequest,
                 content().string(containsString("The body contains invalid values"))
@@ -168,12 +168,12 @@ class CourseWebMvcTest @Autowired constructor(
         }
 
         @Test
-        fun `creating a course returns 400 BAD REQUEST when the JSON property value is blank`() {
+        fun `creating a course returns 400 BAD REQUEST when the JSON value is blank`() {
             mockMvc.perform(
                 post("/course-api/course")
                     .accept(APPLICATION_JSON)
                     .contentType(APPLICATION_JSON)
-                    .content(jsonPropertyValueIsBlank)
+                    .content(jsonValueIsBlank)
             ).andExpectAll(
                 status().isBadRequest,
                 content().string(containsString("Course name should not be blank or it does not match pattern ^[a-zA-Z0-9_-]{2,25}( [a-zA-Z0-9]{2,25})*\$"))
@@ -181,12 +181,12 @@ class CourseWebMvcTest @Autowired constructor(
         }
 
         @Test
-        fun `creating a course returns 400 BAD REQUEST when the JSON property value is not valid`() {
+        fun `creating a course returns 400 BAD REQUEST when the JSON value is not valid`() {
             mockMvc.perform(
                 post("/course-api/course")
                     .accept(APPLICATION_JSON)
                     .contentType(APPLICATION_JSON)
-                    .content(jsonPropertyValueIsNotValid)
+                    .content(jsonValueIsNotValid)
             ).andExpectAll(
                 status().isBadRequest,
                 content().string(containsString("Course name should not be blank or it does not match pattern ^[a-zA-Z0-9_-]{2,25}( [a-zA-Z0-9]{2,25})*\$"))
@@ -210,7 +210,7 @@ class CourseWebMvcTest @Autowired constructor(
         }
 
         @Test
-        fun `creating course returns 400 BAD REQUEST when the request method is wrong`() {
+        fun `creating a course returns 500 INTERNAL SERVER ERROR when wrong HTTP method is used`() {
             mockMvc.perform(get("/course-api/course"))
                 .andExpectAll(
                     status().isInternalServerError,
@@ -219,7 +219,7 @@ class CourseWebMvcTest @Autowired constructor(
         }
 
         @Test
-        fun `creating a course returns 500 INTERNAL SERVER ERROR when the path url is not correct`() {
+        fun `creating a course returns 500 INTERNAL SERVER ERROR when wrong URL is used`() {
             mockMvc.perform(post("/course-api/cour"))
                 .andExpectAll(
                     status().isInternalServerError,

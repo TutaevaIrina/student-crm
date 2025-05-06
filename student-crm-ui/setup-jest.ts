@@ -1,4 +1,5 @@
-import 'jest-preset-angular/setup-jest';
+import '@testing-library/jest-dom';
+import '@testing-library/jest-dom';
 
 Object.defineProperty(window, 'CSS', { value: null });
 Object.defineProperty(window, 'getComputedStyle', {
@@ -20,4 +21,10 @@ Object.defineProperty(document.body.style, 'transform', {
       configurable: true,
     };
   },
+});
+
+Object.defineProperty(window, 'getComputedStyle', {
+  value: () => ({
+    getPropertyValue: () => '', // Rückgabe leerer String
+  }),
 });

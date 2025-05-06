@@ -140,7 +140,7 @@ export const StudentProvider: React.FC<{ children: ReactNode }> = ({children}) =
 export const useStudents = () => {
     const context = useContext(StudentContext);
     if (!context) {
-        throw new Error('useStudents must be used within a CourseProvider');
+        throw new Error('useStudents must be used within a StudentProvider');
     }
     return context;
 };
