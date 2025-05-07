@@ -7,7 +7,6 @@ import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultCourseEnt
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultCourseEntityWithStudents
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultCourseId
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultSimpleCourseDTO
-import de.novatec.itu.studentcrmservice.course.TestDataProvider.studentName
 import de.novatec.itu.studentcrmservice.course.TestDataProvider.defaultStudentEntity
 import de.novatec.itu.studentcrmservice.course.persistence.CourseEntity
 import de.novatec.itu.studentcrmservice.course.persistence.CourseRepository
@@ -67,10 +66,11 @@ class CourseServiceUnitTest {
         fun `throws CourseNotFoundException when course does not exist`() {
             every { courseRepository.findById(defaultCourseId) } returns Optional.empty()
 
-            assertThrows<CourseNotFoundException> {
+            val result = assertThrows<CourseNotFoundException> {
                 cut.getCourseById(defaultCourseId)
             }
 
+            result.message shouldBe "Course with id $defaultCourseId not found"
             verify { courseRepository.findById(defaultCourseId) }
         }
     }
@@ -99,7 +99,7 @@ class CourseServiceUnitTest {
                 cut.createCourse(courseNameMathe)
             }
 
-            verify { courseRepository.save(any()) wasNot called }
+            verify(exactly = 0)  { courseRepository.save(any()) }
         }
     }
 
@@ -130,7 +130,7 @@ class CourseServiceUnitTest {
                 cut.updateCourse(defaultCourseId, courseNameIT)
             }
 
-            verify { courseRepository.save(any()) wasNot called }
+            verify(exactly = 0) { courseRepository.save(any()) }
         }
 
         @Test
@@ -144,6 +144,46 @@ class CourseServiceUnitTest {
             }
 
             verify(exactly = 0) { courseRepository.save(any()) }
+        }
+    }
+
+    @Nested
+    inner class DeleteCourse {
+
+        @Test
+        fun `deleting a course`() {
+            every { courseRepository.findById(defaultCourseId) } returns Optional.of(defaultCourseEntity)
+
+            cut.deleteCourse(defaultCourseId)
+
+            verify { courseRepository.findById(defaultCourseId) }
+            verify { courseRepository.deleteById(defaultCourseId) }
+        }
+
+        @Test
+        fun `throws a CourseNotFoundException when a Course is not found`() {
+            every { courseRepository.findById(defaultCourseId) } returns Optional.empty()
+            every { courseRepository.deleteById(any()) } just Runs
+
+            assertThrows<CourseNotFoundException> {
+                cut.deleteCourse(defaultCourseId)
+            }
+
+            verify { courseRepository.findById(defaultCourseId) }
+            verify (exactly = 0) { courseRepository.deleteById(defaultCourseId) }
+        }
+
+        @Test
+        fun `throws a StudentEnrolledInCourseException when a Course still have Students inside`() {
+            val courseEntity = CourseEntity(courseName = courseNameIT, students = mutableListOf(defaultStudentEntity))
+            every { courseRepository.findById(defaultCourseId) } returns Optional.of(courseEntity)
+
+            assertThrows<StudentEnrolledInCourseException> {
+                cut.deleteCourse(defaultCourseId)
+            }
+
+            verify { courseRepository.findById(defaultCourseId) }
+            verify (exactly = 0) { courseRepository.deleteById(defaultCourseId) }
         }
     }
 
@@ -176,7 +216,7 @@ class CourseServiceUnitTest {
             }
 
             verify { courseRepository.findById(defaultCourseId) }
-            verify(exactly = 0) { studentRepository.findByNameIgnoreCase(studentName) }
+            verify(exactly = 0) { studentRepository.findById(defaultStudentId) }
             verify(exactly = 0) { courseRepository.save(any()) }
         }
 
@@ -197,16 +237,15 @@ class CourseServiceUnitTest {
         fun `throws a StudentAlreadyExistsException when a Student is already enrolled to course`() {
             val entityCapture = slot<CourseEntity>()
             val courseEntity = CourseEntity(courseName = courseNameIT, students = mutableListOf(defaultStudentEntity))
-            val studentEntity = defaultStudentEntity
             every { courseRepository.findById(defaultCourseId) } returns Optional.of(courseEntity)
-            every { studentRepository.findById(defaultStudentId) } returns Optional.of(studentEntity)
+            every { studentRepository.findById(defaultStudentId) } returns Optional.of(defaultStudentEntity)
             every { courseRepository.save(capture(entityCapture)) } answers { entityCapture.captured }
 
             assertThrows<StudentAlreadyExistsException> {
                 cut.addStudentToCourse(defaultCourseId, defaultStudentId)
             }
 
-            verify { courseRepository.save(courseEntity) wasNot called }
+            verify(exactly = 0) { courseRepository.save(courseEntity) }
         }
     }
 
@@ -250,61 +289,14 @@ class CourseServiceUnitTest {
 
         @Test
         fun `throws StudentNotEnrolledInCourseException when student is not enrolled in course`() {
-            val courseEntity = defaultCourseEntity
-            val studentEntity = defaultStudentEntity
-
-            every { courseRepository.findById(defaultCourseId) } returns Optional.of(courseEntity)
-            every { studentRepository.findById(defaultStudentId) } returns Optional.of(studentEntity)
+            every { courseRepository.findById(defaultCourseId) } returns Optional.of(defaultCourseEntity)
+            every { studentRepository.findById(defaultStudentId) } returns Optional.of(defaultStudentEntity)
 
             assertThrows<StudentNotEnrolledInCourseException> {
                 cut.removeStudentFromCourse(defaultCourseId, defaultStudentId)
             }
 
             verify(exactly = 0) { courseRepository.save(any()) }
-        }
-    }
-
-
-    @Nested
-    inner class DeleteCourse {
-
-        @Test
-        fun `deleting a course`() {
-            every { courseRepository.findById(defaultCourseId) } returns Optional.of(defaultCourseEntity)
-
-            cut.deleteCourse(defaultCourseId)
-
-            verify { courseRepository.findById(defaultCourseId) }
-            verify { courseRepository.deleteById(defaultCourseId) }
-        }
-
-        @Test
-        fun `throws a CourseNotFoundException when a Course is not found`() {
-            every { courseRepository.findById(defaultCourseId) } returns Optional.empty()
-
-            assertThrows<CourseNotFoundException> {
-                cut.deleteCourse(defaultCourseId)
-            }
-
-            verify { courseRepository.findById(defaultCourseId) }
-            verify(exactly = 0) {
-                courseRepository.deleteById(defaultCourseId)
-            }
-        }
-
-        @Test
-        fun `throws a StudentEnrolledInCourseException when a Course still have Students inside`() {
-            val courseEntity = CourseEntity(courseName = courseNameIT, students = mutableListOf(defaultStudentEntity))
-            every { courseRepository.findById(defaultCourseId) } returns Optional.of(courseEntity)
-
-            assertThrows<StudentEnrolledInCourseException> {
-                cut.deleteCourse(defaultCourseId)
-            }
-
-            verify { courseRepository.findById(defaultCourseId) }
-            verify(exactly = 0) {
-                courseRepository.deleteById(defaultCourseId)
-            }
         }
     }
 }
