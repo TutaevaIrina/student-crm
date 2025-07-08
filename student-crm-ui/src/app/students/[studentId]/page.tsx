@@ -1,6 +1,6 @@
 "use client"
 
-import {useEffect, useState} from "react";
+import { use, useEffect, useState } from 'react';
 import {Student} from "@/app/types/Student";
 import {useStudents} from "@/app/contexts/StudentContext";
 import StudentEditor from "@/app/components/student/StudentEditor";
@@ -8,19 +8,20 @@ import AddRemoveCourse from "@/app/components/student/AddRemoveCourse";
 import {Box, Button, Typography} from "@mui/material";
 import Dashboard from "@/app/components/common/Dashboard";
 
-function StudentIdPage({params}: { params: { studentId: number } }) {
+function StudentIdPage({ params }: { params: Promise<{ studentId: number }> }) {
+    const { studentId } = use(params);
     const [student, setStudent] = useState<Student | null>(null)
     const [isEditing, setIsEditing] = useState(false)
     const {fetchStudentById, updateStudent} = useStudents()
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = (await fetchStudentById(params.studentId)) as Student;
+            const data = (await fetchStudentById(studentId)) as Student;
             setStudent(data);
         };
 
         fetchData();
-    }, [params.studentId]);
+    }, [studentId]);
 
     const startEditing = () => {
         setIsEditing(true)
@@ -31,7 +32,7 @@ function StudentIdPage({params}: { params: { studentId: number } }) {
     }
 
     const handleSave = async (newFirstName: string, newLastName: string, newEmail: string) => {
-        await updateStudent(params.studentId, newFirstName, newLastName, newEmail);
+        await updateStudent(studentId, newFirstName, newLastName, newEmail);
         setStudent(prevStudent => {
             if (prevStudent === null) return null;
             return {...prevStudent, firstName: newFirstName, lastName: newLastName, email: newEmail}
@@ -66,7 +67,7 @@ function StudentIdPage({params}: { params: { studentId: number } }) {
                 <Box sx={{ display: 'flex' }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column'}}>
                         <Typography variant="h5" color="text.primary">
-                            Nr. {params.studentId} {student.firstName} {student.lastName}
+                            Nr. {studentId} {student.firstName} {student.lastName}
                         </Typography>
                         <Typography variant="h6" color="text.primary" gutterBottom>
                             e-mail: {student.email}
@@ -77,7 +78,7 @@ function StudentIdPage({params}: { params: { studentId: number } }) {
                     </Box>
                 </Box>
             )}
-            <AddRemoveCourse studentId={params.studentId}/>
+            <AddRemoveCourse studentId={studentId}/>
             </Box>
         </Box>
     );

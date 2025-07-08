@@ -1,6 +1,6 @@
 "use client"
 
-import {useEffect, useState} from "react";
+import {use, useEffect, useState} from "react";
 import {Course} from "@/app/types/Course";
 import {useCourses} from "@/app/contexts/CourseContext";
 import AddRemoveStudent from "@/app/components/course/AddRemoveStudent";
@@ -8,19 +8,20 @@ import CourseEditor from "@/app/components/course/CourseEditor";
 import {Box, Button, Typography} from "@mui/material";
 import Dashboard from "@/app/components/common/Dashboard";
 
-function CourseIdPage({params}: { params: { courseId: number } }) {
+function CourseIdPage({params}: { params: Promise<{ courseId: number }> }) {
+    const { courseId } = use(params);
     const [course, setCourse] = useState<Course | null>(null)
     const [isEditing, setIsEditing] = useState(false)
     const {fetchCourseById, updateCourse} = useCourses()
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await fetchCourseById(params.courseId);
+            const data = await fetchCourseById(courseId);
             setCourse(data);
         };
 
         fetchData();
-    }, [params.courseId]);
+    }, [courseId]);
 
     const startEditing = () => {
         setIsEditing(true)
@@ -31,7 +32,7 @@ function CourseIdPage({params}: { params: { courseId: number } }) {
     }
 
     const handleSave = async (newCourseName: string) => {
-        await updateCourse(params.courseId, newCourseName);
+        await updateCourse(courseId, newCourseName);
         setCourse(prevCourse => {
             if (prevCourse === null) return null;
             return {...prevCourse, courseName: newCourseName}
@@ -64,14 +65,14 @@ function CourseIdPage({params}: { params: { courseId: number } }) {
             ) : (
                 <Box sx={{ display: 'center', flexDirection: 'row', gap: 1 }}>
                     <Typography variant="h5" color="text.primary" gutterBottom>
-                       Nr. {params.courseId} {course.courseName}
+                       Nr. {courseId} {course.courseName}
                     </Typography>
                     <Button variant="outlined" onClick={startEditing}>
                         Edit
                     </Button>
                 </Box>
             )}
-                <AddRemoveStudent courseId={params.courseId}/>
+                <AddRemoveStudent courseId={courseId}/>
             </Box>
 
         </Box>
